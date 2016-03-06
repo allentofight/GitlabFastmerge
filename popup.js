@@ -15,11 +15,6 @@ chrome.browserAction.onClicked.addListener(function(tab) {
 
 });
 
-window.addEventListener('onload', function(event) {
-  	var url = 'https://www.baidu.com/';
-  	chrome.tabs.executeScript(null, {code:"window.location.href = '" + url + "';"});
-});
-
 document.addEventListener('DOMContentLoaded', function() {
     // var divs = document.querySelectorAll('div');
     // for (var i = 0; i < divs.length; i++) {
