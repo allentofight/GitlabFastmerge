@@ -15,23 +15,34 @@ chrome.browserAction.onClicked.addListener(function(tab) {
 
 });
 
+chrome.runtime.onMessage.addListener(
+    function(request, sender, sendResponse) {
+        console.log(sender.tab ?
+            "from a content script:" + sender.tab.url :
+            "from the extension");
+        if (request.greeting == "hello")
+            sendResponse({ farewell: "goodbye" });
+        return true;
+
+    }
+);
+
 document.addEventListener('DOMContentLoaded', function() {
     // var divs = document.querySelectorAll('div');
     // for (var i = 0; i < divs.length; i++) {
     //     divs[i].addEventListener('click	', click);
     // }
-	
-	// var form = document.getElementById('red');
-	// if (form != null) {
- //  	var url = 'https://www.baidu.com/';
- //  	chrome.tabs.executeScript(null, {code:"window.location.href = '" + url + "';"});
- //  	return;
-	// }
 
-  	var url = 'http://git.husor.com.cn/ios/beibei/merge_requests/new';
-  	chrome.tabs.executeScript(null, {code:"window.location.href = '" + url + "';"});
+    // var form = document.getElementById('red');
+    // if (form != null) {
+    //  	var url = 'https://www.baidu.com/';
+    //  	chrome.tabs.executeScript(null, {code:"window.location.href = '" + url + "';"});
+    //  	return;
+    // }
+    var url = 'http://git.husor.com.cn/ios/beibei/merge_requests/new';
+    chrome.tabs.executeScript(null, { code: "window.location.href = '" + url + "';" });
     return;
-	console.log('readyState = haha');
+    console.log('readyState = haha');
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
         if (request.readyState === 4) {
