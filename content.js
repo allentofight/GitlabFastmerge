@@ -1,9 +1,11 @@
 var xhr = new XMLHttpRequest();
 xhr.onreadystatechange = function() {
     if (xhr.readyState == XMLHttpRequest.DONE) {
+        // var mergeRequestElement = document.getElementById('new_merge_request');
+        // return;
         var element = document.createElement('html');
         element.innerHTML = xhr.responseText;
-        
+    
         // var targetBranch = element.getElementById('search');
         var merge_request_source_branch = element.querySelector('#merge_request_source_branch');
         var sourceBranchChildNodes = merge_request_source_branch.childNodes;
@@ -14,10 +16,8 @@ xhr.onreadystatechange = function() {
                 sourceBranchOptionValues.push(childElement.value);
             }
         }
-        // chrome.tabs.sendRequest(sourceBranchOptionValues);
-        // var port = chrome.runtime.connect();
-        //       port.postMessage('haha...');
-        chrome.runtime.sendMessage({ greeting: "hello" }, function(response) {
+
+        chrome.runtime.sendMessage({ greeting: sourceBranchOptionValues }, function(response) {
             console.log(response.farewell);
         });
     }

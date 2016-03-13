@@ -1,55 +1,66 @@
 <!doctype html>
 <html>
-  <head>
+
+<head>
     <title>Set Page Color Popup</title>
     <style>
     body {
-      overflow: hidden;
-      margin: 0px;
-      padding: 0px;
-      background: white;
+        overflow: hidden;
+        margin: 0px;
+        padding: 0px;
+        background: white;
     }
-
+    
     div:first-child {
-      margin-top: 0px;
+        margin-top: 0px;
     }
-
+    
     div {
-      cursor: pointer;
-      text-align: center;
-      padding: 1px 3px;
-      font-family: sans-serif;
-      font-size: 0.8em;
-      width: 100px;
-      margin-top: 1px;
-      background: #cccccc;
+        cursor: pointer;
+        text-align: center;
+        padding: 1px 3px;
+        font-family: sans-serif;
+        font-size: 0.8em;
+        width: 100px;
+        margin-top: 1px;
+        background: #cccccc;
     }
+    
     div:hover {
-      background: #aaaaaa;
+        background: #aaaaaa;
     }
+    
     #red {
-      border: 1px solid red;
-      color: red;
+        border: 1px solid red;
+        color: red;
     }
+    
     #blue {
-      border: 1px solid blue;
-      color: blue;
+        border: 1px solid blue;
+        color: blue;
     }
+    
     #green {
-      border: 1px solid green;
-      color: green;
+        border: 1px solid green;
+        color: green;
     }
+    
     #yellow {
-      border: 1px solid yellow;
-      color: yellow;
+        border: 1px solid yellow;
+        color: yellow;
     }
     </style>
     <script src="popup.js"></script>
-  </head>
-  <body>
-    <div id="red">red</div>
-    <div id="blue">blue</div>
-    <div id="green">green</div>
-    <div id="yellow">yellow</div>
-  </body>
+</head>
+
+<body>
+    source_branch
+    <select id="source_branch">
+    </select>
+    destination_branch
+    <select id="destination_branch">
+    </select>
+    <div>确定</div>
+</body>
+
 </html>

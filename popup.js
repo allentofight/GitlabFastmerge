@@ -20,6 +20,19 @@ chrome.runtime.onMessage.addListener(
         console.log(sender.tab ?
             "from a content script:" + sender.tab.url :
             "from the extension");
+        var sourceBranches = request.greeting;
+        var sourceBranchElement = document.getElementById('source_branch');
+        var targetBranchElement = document.getElementById('destination_branch');
+        for (var i = 0; i <= sourceBranches.length; i++){
+            var opt = document.createElement('option');
+            opt.value = sourceBranches[i];
+            opt.innerHTML = sourceBranches[i];
+            sourceBranchElement.appendChild(opt);
+
+            var destination = opt.cloneNode(true);
+            targetBranchElement.appendChild(destination);
+        }
+
         if (request.greeting == "hello")
             sendResponse({ farewell: "goodbye" });
         return true;
