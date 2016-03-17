@@ -27,21 +27,6 @@ function getBranches() {
     var testInt = 0;
     xhr.onreadystatechange = function() {
         if (xhr.readyState == XMLHttpRequest.DONE) {
-
-            // var merge_request_source_branch = document.getElementById('merge_request_source_branch');
-            // if (merge_request_source_branch) {
-            //     alert('just a test');
-            // }
-            // merge_request_source_branch.value = 'beibei_pod';
-
-            // var merge_request_target_branch = document.getElementById('merge_request_target_branch');
-            // merge_request_target_branch.value = 'beibei_pod';
-            // var mergeRequestElement = document.getElementById('new_merge_request');
-            // mergeRequestElement.submit();
-
-            // window.location.href = 'http://git.husor.com.cn/ios/beibei/merge_requests/new?utf8=✓&merge_request%5Bsource_project_id%5D=32&merge_request%5Bsource_branch%5D=beibei_pod&merge_request%5Btarget_project_id%5D=32&merge_request%5Btarget_branch%5D=master'
-
-            // return;
             var element = document.createElement('html');
             element.innerHTML = xhr.responseText;
 
@@ -58,7 +43,7 @@ function getBranches() {
 
             var sourceBranchElement = document.getElementById('source_branch');
             var targetBranchElement = document.getElementById('destination_branch');
-            for (var i = 0; i <= sourceBranches.length; i++) {
+            for (var i = 0; i < sourceBranches.length; i++) {
                 var opt = document.createElement('option');
                 opt.value = sourceBranches[i];
                 opt.innerHTML = sourceBranches[i];
@@ -67,12 +52,11 @@ function getBranches() {
                 var destination = opt.cloneNode(true);
                 targetBranchElement.appendChild(destination);
             }
-
             return;
             // console.log('sourceBranchOptionValues = ' + sourceBranchOptionValues);
-            chrome.runtime.sendMessage({ greeting: sourceBranchOptionValues }, function(response) {
-                console.log(response.farewell);
-            });
+            // chrome.runtime.sendMessage({ greeting: sourceBranchOptionValues }, function(response) {
+            //     console.log(response.farewell);
+            // });
         }
     }
     xhr.open('GET', 'http://git.husor.com.cn/ios/beibei/merge_requests/new', true);
@@ -80,21 +64,60 @@ function getBranches() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    // var divs = document.querySelectorAll('div');
-    // for (var i = 0; i < divs.length; i++) {
-    //     divs[i].addEventListener('click  ', click);
-    // }
-
-    // var form = document.getElementById('red');
-    // if (form != null) {
-    //      var url = 'https://www.baidu.com/';
-    //      chrome.tabs.executeScript(null, {code:"window.location.href = '" + url + "';"});
-    //      return;
-    // }
+    var okBtn = document.getElementById('OK_BTN');
+    okBtn.addEventListener('click', function(event) {
+        var sourceBranchElement = document.getElementById('source_branch');
+        var targetBranchElement = document.getElementById('destination_branch');
+        var sourceBranch = sourceBranchElement.options[sourceBranchElement.selectedIndex].value;
+        var destinationBranch = targetBranchElement.options[targetBranchElement.selectedIndex].value;
+        if (!sourceBranch || !destinationBranch) {
+            chrome.tabs.executeScript(null, { code: "alert('请选择source/destination branch')" });
+        } else {
+            var url = 'http://git.husor.com.cn/ios/beibei/merge_requests/new';
+            url = 'http://git.husor.com.cn/ios/beibei/merge_requests/new?utf8=✓&merge_request[source_project_id]=32&merge_request[source_branch]=' + sourceBranch + '&merge_request[target_project_id]=32&merge_request[target_branch]=' + destinationBranch;
+            chrome.tabs.executeScript(null, { code: "window.location.href = '" + url + "';" });
+        }
+    });
     getBranches();
-    return;
-    var url = 'http://git.husor.com.cn/ios/beibei/merge_requests/new';
-    url = 'http://git.husor.com.cn/ios/beibei/merge_requests/new?utf8=✓&merge_request[source_project_id]=32&merge_request[source_branch]=beibei_pod&merge_request[target_project_id]=32&merge_request[target_branch]=master';
-    chrome.tabs.executeScript(null, { code: "window.location.href = '" + url + "';" });
-
+    getAssignees();
 });
+
+function getAssignees() {
+    var xhr = new XMLHttpRequest();
+    var testInt = 0;
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == XMLHttpRequest.DONE) {
+
+            var allAssignees = JSON.parse(xhr.responseText);
+            // chrome.tabs.executeScript(null, { code: "alert('" + allAssignees[0]['name'] + "')" });
+            var assigneeNames = allAssignees.map(function(assignee) {
+                return assignee.name;
+            });
+            var assigneeElement = document.getElementById('assignee');
+            for (var i = 0; i < assigneeNames.length; i++) {
+                var opt = document.createElement('option');
+                opt.value = assigneeNames[i];
+                opt.innerHTML = assigneeNames[i];
+                assigneeElement.appendChild(opt);
+            }
+            chrome.storage.sync.get("assignee", function(assignee) {
+                if (assignee) {
+                    assigneeElement.value = assignee['name'];
+                }
+            });
+
+            assigneeElement.addEventListener("change", function() {
+                var selectedIndex = assigneeElement.selectedIndex;
+                chrome.storage.sync.set({ 'assignee': allAssignees[selectedIndex] }, function() {
+                    // Notify that we saved.
+                    chrome.tabs.executeScript(null, { code: "alert('" + success + "')" });
+                });
+
+                // var assignee = window.localStorage.getItem('assignee');
+                // chrome.tabs.executeScript(null, { code: "alert('" + assignee['name'] + "')" });
+            });
+        }
+    }
+    xhr.open('GET', 'http://git.husor.com.cn/autocomplete/users.json?search=&per_page=20&active=true&project_id=32&current_user=true', true);
+    xhr.send(null);
+}

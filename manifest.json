@@ -3,7 +3,9 @@
     "description": "Change the current page color",
     "version": "1.0",
     "permissions": [
-        "tabs", "<all_urls>"
+        "tabs", 
+        // "<all_urls>",
+        "storage"
     ],
     "content_scripts": [
         {
