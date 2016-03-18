@@ -104,10 +104,11 @@ function getAssignees() {
                 opt.innerHTML = assigneeNames[i];
                 assigneeElement.appendChild(opt);
             }
-            chrome.storage.sync.get('assignee', function(assignee) {
-                if (assignee) {
-                    var assigneeInfo = JSON.parse(assignee);
-                    assigneeElement.value = assignee;
+            chrome.storage.sync.get('assignee', function(assigneeObj) {
+                console.log('pre', assigneeObj);
+                if (assigneeObj) {
+                    assigneeElement.value = assigneeObj['assignee']['name'];
+                    assigneeElement.assignee = assigneeObj['assignee'];
                 }
             });
 
@@ -115,17 +116,18 @@ function getAssignees() {
                 var selectedIndex = assigneeElement.selectedIndex;
                 var assignee = allAssignees[selectedIndex];
                 var assigneeInfo = JSON.stringify(assignee);
-                chrome.storage.sync.set({ 'assignee': assigneeInfo }, function() {
+                var assigneeDict = {'name':assignee['name'], 'id':assignee['id']};
+                chrome.storage.sync.set({ 'assignee': assigneeDict}, function() {
                     // Notify that we saved.
-                    chrome.tabs.executeScript(null, { code: "alert('" +assigneeInfo+ "')" });
+                    // chrome.tabs.executeScript(null, { code: "alert('" +assignee['name']+ "')" });
                     chrome.storage.sync.get('assignee', function(assignee) {
                         console.log('assignee', assignee);
                         if (assignee) {
                             var assigneeInfo = JSON.parse(assignee);
-                            chrome.tabs.executeScript(null, { code: "alert('" + assigneeInfo['name'] + "')" });
+                            chrome.tabs.executeScript(null, { code: "alert('" + assignee + "')" });
                             assigneeElement.value = assignee;
                         } else {
-                            chrome.tabs.executeScript(null, { code: "alert('" + assigneeInfo['name'] + "')" });
+                            // chrome.tabs.executeScript(null, { code: "alert('" + assignee + "')" });
                         }
                     });
 
