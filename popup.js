@@ -84,9 +84,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function getAssignees() {
     var xhr = new XMLHttpRequest();
-    var testInt = 0;
     xhr.onreadystatechange = function() {
         if (xhr.readyState == XMLHttpRequest.DONE) {
+            // chrome.storage.sync.set({ 'value': 12 }, function() {
+            //     chrome.storage.sync.get("value", function(data) {
+            //         console.log("data", data);
+            //     });
+            // });
 
             var allAssignees = JSON.parse(xhr.responseText);
             // chrome.tabs.executeScript(null, { code: "alert('" + allAssignees[0]['name'] + "')" });
@@ -100,17 +104,31 @@ function getAssignees() {
                 opt.innerHTML = assigneeNames[i];
                 assigneeElement.appendChild(opt);
             }
-            chrome.storage.sync.get("assignee", function(assignee) {
+            chrome.storage.sync.get('assignee', function(assignee) {
                 if (assignee) {
-                    assigneeElement.value = assignee['name'];
+                    var assigneeInfo = JSON.parse(assignee);
+                    assigneeElement.value = assignee;
                 }
             });
 
             assigneeElement.addEventListener("change", function() {
                 var selectedIndex = assigneeElement.selectedIndex;
-                chrome.storage.sync.set({ 'assignee': allAssignees[selectedIndex] }, function() {
+                var assignee = allAssignees[selectedIndex];
+                var assigneeInfo = JSON.stringify(assignee);
+                chrome.storage.sync.set({ 'assignee': assigneeInfo }, function() {
                     // Notify that we saved.
-                    chrome.tabs.executeScript(null, { code: "alert('" + success + "')" });
+                    chrome.tabs.executeScript(null, { code: "alert('" +assigneeInfo+ "')" });
+                    chrome.storage.sync.get('assignee', function(assignee) {
+                        console.log('assignee', assignee);
+                        if (assignee) {
+                            var assigneeInfo = JSON.parse(assignee);
+                            chrome.tabs.executeScript(null, { code: "alert('" + assigneeInfo['name'] + "')" });
+                            assigneeElement.value = assignee;
+                        } else {
+                            chrome.tabs.executeScript(null, { code: "alert('" + assigneeInfo['name'] + "')" });
+                        }
+                    });
+
                 });
 
                 // var assignee = window.localStorage.getItem('assignee');
