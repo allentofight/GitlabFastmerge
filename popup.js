@@ -13,12 +13,16 @@ chrome.runtime.onMessage.addListener(
         console.log(sender.tab ?
             "from a content script:" + sender.tab.url :
             "from the extension");
-        var sourceBranches = request.greeting;
+        var assignee = request.assignee;
 
-        if (request.greeting == "hello")
-            sendResponse({ farewell: "goodbye" });
+        if (request.assignee == "assignee") {
+            chrome.storage.sync.get('assignee', function(assigneeObj) {
+                // console.log('send', assignee);
+                sendResponse({ assignee: assigneeObj['assignee'] });
+            });
+
+        }
         return true;
-
     }
 );
 
@@ -52,11 +56,34 @@ function getBranches() {
                 var destination = opt.cloneNode(true);
                 targetBranchElement.appendChild(destination);
             }
-            return;
-            // console.log('sourceBranchOptionValues = ' + sourceBranchOptionValues);
-            // chrome.runtime.sendMessage({ greeting: sourceBranchOptionValues }, function(response) {
-            //     console.log(response.farewell);
-            // });
+
+
+            chrome.storage.sync.get('sourceBranch', function(sourceBranchObj) {
+                console.log('sourceBranch', sourceBranchObj);
+                if (sourceBranchObj) {
+                    sourceBranchElement.value = sourceBranchObj['sourceBranch'];
+                }
+            });
+            chrome.storage.sync.get('destBranch', function(destBranchObj) {
+                console.log('destBranch', destBranchObj);
+                if (destBranchObj) {
+                    targetBranchElement.value = destBranchObj['destBranch'];
+                }
+            });
+
+
+            sourceBranchElement.addEventListener("change", function() {
+                var selectedIndex = sourceBranchElement.selectedIndex;
+                var sourceBranch = sourceBranches[selectedIndex];
+                chrome.storage.sync.set({ 'sourceBranch': sourceBranch }, function() {})
+            });
+
+            targetBranchElement.addEventListener("change", function() {
+                var selectedIndex = targetBranchElement.selectedIndex;
+                var destBranch = sourceBranches[selectedIndex];
+                chrome.storage.sync.set({ 'destBranch': destBranch }, function() {})
+            });
+
         }
     }
     xhr.open('GET', 'http://git.husor.com.cn/ios/beibei/merge_requests/new', true);
@@ -86,12 +113,6 @@ function getAssignees() {
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {
         if (xhr.readyState == XMLHttpRequest.DONE) {
-            // chrome.storage.sync.set({ 'value': 12 }, function() {
-            //     chrome.storage.sync.get("value", function(data) {
-            //         console.log("data", data);
-            //     });
-            // });
-
             var allAssignees = JSON.parse(xhr.responseText);
             // chrome.tabs.executeScript(null, { code: "alert('" + allAssignees[0]['name'] + "')" });
             var assigneeNames = allAssignees.map(function(assignee) {
@@ -116,25 +137,10 @@ function getAssignees() {
                 var selectedIndex = assigneeElement.selectedIndex;
                 var assignee = allAssignees[selectedIndex];
                 var assigneeInfo = JSON.stringify(assignee);
-                var assigneeDict = {'name':assignee['name'], 'id':assignee['id']};
-                chrome.storage.sync.set({ 'assignee': assigneeDict}, function() {
-                    // Notify that we saved.
-                    // chrome.tabs.executeScript(null, { code: "alert('" +assignee['name']+ "')" });
-                    chrome.storage.sync.get('assignee', function(assignee) {
-                        console.log('assignee', assignee);
-                        if (assignee) {
-                            var assigneeInfo = JSON.parse(assignee);
-                            chrome.tabs.executeScript(null, { code: "alert('" + assignee + "')" });
-                            assigneeElement.value = assignee;
-                        } else {
-                            // chrome.tabs.executeScript(null, { code: "alert('" + assignee + "')" });
-                        }
-                    });
+                var assigneeDict = { 'name': assignee['name'], 'id': assignee['id'] };
+                chrome.storage.sync.set({ 'assignee': assigneeDict }, function() {
 
                 });
-
-                // var assignee = window.localStorage.getItem('assignee');
-                // chrome.tabs.executeScript(null, { code: "alert('" + assignee['name'] + "')" });
             });
         }
     }
