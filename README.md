@@ -3,6 +3,7 @@
 请按以下步骤将此插件放入Chrome中
 
 1.clone此仓库到本机
+
 2.打开Chrome，输入chrome://extensions/，然后点击以下按钮,选择此仓库的目录即可
 
 ![Instruction](https://i.imgsafe.org/add9da8.png)
