@@ -86,7 +86,7 @@ function getBranches() {
 
         }
     }
-    xhr.open('GET', 'http://git.husor.com.cn/ios/beibei/merge_requests/new', true);
+    xhr.open('GET', 'http://xxx/merge_requests/new', true);
     xhr.send(null);
 }
 
@@ -100,8 +100,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!sourceBranch || !destinationBranch) {
             chrome.tabs.executeScript(null, { code: "alert('请选择source/destination branch')" });
         } else {
-            var url = 'http://git.husor.com.cn/ios/beibei/merge_requests/new';
-            url = 'http://git.husor.com.cn/ios/beibei/merge_requests/new?utf8=✓&merge_request[source_project_id]=32&merge_request[source_branch]=' + sourceBranch + '&merge_request[target_project_id]=32&merge_request[target_branch]=' + destinationBranch;
+            var url = 'http://xxx/merge_requests/new';
+            url = 'http://xxx/merge_requests/new?utf8=✓&merge_request[source_project_id]=32&merge_request[source_branch]=' + sourceBranch + '&merge_request[target_project_id]=32&merge_request[target_branch]=' + destinationBranch;
             chrome.tabs.executeScript(null, { code: "window.location.href = '" + url + "';" });
         }
     });
@@ -144,6 +144,6 @@ function getAssignees() {
             });
         }
     }
-    xhr.open('GET', 'http://git.husor.com.cn/autocomplete/users.json?search=&per_page=20&active=true&project_id=32&current_user=true', true);
+    xhr.open('GET', 'xxx/autocomplete/users.json?search=&per_page=20&active=true&project_id=32&current_user=true', true);
     xhr.send(null);
 }
